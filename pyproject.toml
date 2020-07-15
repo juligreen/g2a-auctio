@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "g2a-auctio"
+version = "0.1.0"
+description = ""
+authors = ["Julius Dehner <julius.dehner@gmail.com>"]
+license = "GPLv3"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+selenium = "^3.141.0"
+requests = "^2.23.0"
+click = "^7.1.1"
+rope = "^0.16.0"
+pylint = "^2.4.4"
+typer = "^0.3.0"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+
+[tool.black]
+line-length = 120
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+

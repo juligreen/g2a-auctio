@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+import typer
 
 
 def execute_this_shit():
@@ -14,7 +15,7 @@ def execute_this_shit():
     driver = webdriver.Chrome()
     driver.implicitly_wait(30)
     driver.maximize_window()
-    google_login(driver, 'test', 'test')
+    # google_login(driver, 'test', 'test')
     login(driver, 'test', 'test')
 
 
@@ -81,4 +82,4 @@ def cookie_clicker(driver):
 
 
 if __name__ == '__main__':
-    execute_this_shit()
+    typer.run(execute_this_shit)
