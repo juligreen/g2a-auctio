@@ -4,12 +4,15 @@ import time
 import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions, expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from g2a_auctio.Utility import managed_chromedriver, get_chromedriver_options
 import typer
+from selenium.common.exceptions import NoSuchElementException
 
 app = typer.Typer()
+
+min_transactions = 1000
 
 
 @app.command()
@@ -37,10 +40,22 @@ def google_login(driver: webdriver.Chrome, google_mail, google_password):
     time.sleep(2)
 
 
-
 def lookup_game_price(driver: webdriver.Chrome, game_name: str):
     driver.get(f"https://www.g2a.com/search?query={game_name.replace(' ', '+')}")
     cookie_clicker(driver)
+    WebDriverWait(driver, 800).until(
+        expected_conditions.visibility_of_element_located((By.CLASS_NAME, "offers-list"))
+    )
+    print("found offer site")
+
+    offer_list_elements = driver.find_elements_by_class_name("offers-list__element")
+    for list_element in offer_list_elements:
+        transactions = int(list_element.find_element_by_class_name("seller-info__transactions").text)
+        print(transactions)
+        if transactions > min_transactions:
+            offer_price = list_element.find_element_by_class_name("offer__price").text
+            print(offer_price)
+            return offer_price
     time.sleep(10)
 
 
@@ -58,21 +73,6 @@ def login(driver, username, password):
     email_field.send_keys(username)
     password_field.send_keys(password)
 
-    # from: http://isaacviel.name/make-web-driver-wait-element-become-visiable/
-    if EC.presence_of_element_located((By.TAG_NAME, "iframe")):
-        # from: https://stackoverflow.com/questions/7534622/selecting-an-iframe-using-python-selenium
-        driver.switch_to.frame(driver.find_element_by_tag_name("iframe"))
-        recaptcha_checkbox = driver.find_element_by_class_name("recaptcha-checkbox-checkmark")
-        recaptcha_checkbox.click()
-        try:
-            WebDriverWait(driver, 120).until(
-                EC.visibility_of_element_located((By.CLASS_NAME, "recaptcha-checkbox-checked"))
-            )
-        except selenium.common.exceptions.TimeoutException:
-            driver.close()
-            print("Selenium.Timeoutexception")
-            sys.exit(0)
-
     driver.switch_to.default_content()
     login_button = driver.find_element_by_xpath("//button[text()='Log in']")
     login_button.click()
@@ -81,8 +81,11 @@ def login(driver, username, password):
 
 def cookie_clicker(driver):
     """Remove cookie popup"""
-    confirm_button = driver.find_element_by_xpath('//button[contains(text(), "Confirm")]')
-    confirm_button.click()
+    try:
+        confirm_button = driver.find_element_by_xpath('//button[contains(text(), "Confirm")]')
+        confirm_button.click()
+    except NoSuchElementException:
+        print("No cookie button, was it already clicked?")
 
 
 if __name__ == "__main__":
