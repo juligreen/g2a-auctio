@@ -13,6 +13,7 @@ click = "^7.1.1"
 rope = "^0.16.0"
 pylint = "^2.4.4"
 typer = "^0.3.0"
+undetected-chromedriver = "^1.4.2"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

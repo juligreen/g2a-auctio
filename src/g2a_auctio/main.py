@@ -9,6 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from g2a_auctio.Utility import managed_chromedriver, get_chromedriver_options
 import typer
 from selenium.common.exceptions import NoSuchElementException
+import random
 
 app = typer.Typer()
 
@@ -40,9 +41,20 @@ def google_login(driver: webdriver.Chrome, google_mail, google_password):
     time.sleep(2)
 
 
+def wait_set_time_plus_random_time(wait_time: int):
+    time.sleep(wait_time)
+    one_after_dot = random.randint(0,2) * 0.1
+    two_after_dot = random.randint(0,2) * 0.01
+    time.sleep(one_after_dot)
+    time.sleep(two_after_dot)
+
 def lookup_game_price(driver: webdriver.Chrome, game_name: str):
-    driver.get(f"https://www.g2a.com/search?query={game_name.replace(' ', '+')}")
+    driver.get(f"https://www.g2a.com/")
+    wait_set_time_plus_random_time(3)
     cookie_clicker(driver)
+    driver.get(f"https://www.g2a.com/search?query={game_name.replace(' ', '%2B')}")
+    wait_set_time_plus_random_time(6)
+    # cookie_clicker(driver)
     WebDriverWait(driver, 800).until(
         expected_conditions.visibility_of_element_located((By.CLASS_NAME, "offers-list"))
     )
