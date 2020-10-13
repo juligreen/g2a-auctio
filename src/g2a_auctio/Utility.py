@@ -1,4 +1,6 @@
 import undetected_chromedriver as uc
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from contextlib import contextmanager
 import time
 
@@ -23,3 +25,7 @@ def get_chromedriver_options():
     # options.add_argument('--disable-setuid-sandbox')
     # options.add_argument('--disable-web-security')
     return options
+
+def open_new_tab(driver: webdriver.Chrome):
+    driver.send_keys(Keys.CONTROL + "t")
+    driver.get("data:,")
